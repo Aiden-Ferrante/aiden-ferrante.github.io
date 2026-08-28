@@ -26,6 +26,11 @@ Static personal site (blog + YouTube companion posts) for aiden-ferrante.github.
   (`.github/workflows/deploy.yml`) to GitHub Pages on push to main. Nothing depends on the Spark
   being up.
 
+## Checks
+
+`npm run check` (astro check) runs in CI before the build, so a type error blocks the deploy
+rather than shipping. The topic-slug and duplicate-slug guards fail the build itself.
+
 ## Publishing flow
 
 1. Write `src/content/blog/<slug>.md` with frontmatter.
