@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Private planning. This repo is public and docs/content-plan.md discusses how the
+# work is presented to employers — it is not for the audience it is about.
+docs/content-plan.md
