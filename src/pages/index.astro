@@ -1,0 +1,100 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import Header from '../components/Header.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const posts = (await getCollection('blog'))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 5);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<style>
+			.intro h1 {
+				margin-bottom: 0.25em;
+			}
+			.tagline {
+				color: rgb(var(--gray));
+				font-size: 1.15em;
+			}
+			.recent {
+				margin-top: 2.5em;
+			}
+			.recent h2 {
+				font-size: 1.3em;
+				border-bottom: 1px solid rgb(var(--gray-light));
+				padding-bottom: 0.4em;
+			}
+			.recent ul {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+			.recent li {
+				display: flex;
+				align-items: baseline;
+				gap: 1em;
+				padding: 0.5em 0;
+			}
+			.recent li a {
+				text-decoration: none;
+			}
+			.recent .date {
+				color: rgb(var(--gray));
+				font-size: 0.9em;
+				white-space: nowrap;
+			}
+			.kind {
+				font-size: 0.8em;
+				color: rgb(var(--accent));
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<section class="intro">
+				<h1>Hi, I'm Aiden.</h1>
+				<p class="tagline">
+					I'm a data science master's student who learns by building. This site is where I work
+					through the concepts on my long-term learning map — from first principles, in my own
+					words — and where I post opinions on AI and software as the field moves.
+				</p>
+				<p>
+					Every video I make gets a written companion post here, and everything else is essays and
+					notes. If you want the short version of who I am, see the <a href="/about">about page</a>.
+				</p>
+			</section>
+			<section class="recent">
+				<h2>Recent posts</h2>
+				{
+					posts.length === 0 ? (
+						<p>Nothing here yet — first post coming soon.</p>
+					) : (
+						<ul>
+							{posts.map((post) => (
+								<li>
+									<span class="date">
+										<FormattedDate date={post.data.pubDate} />
+									</span>
+									<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+									{post.data.kind === 'video' && <span class="kind">▶ video</span>}
+								</li>
+							))}
+						</ul>
+					)
+				}
+				<p>
+					<a href="/blog">All posts →</a>
+				</p>
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
