@@ -1,0 +1,83 @@
+---
+import { section as lookupSection } from '../data/sections';
+import type { Post } from '../lib/posts';
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+	posts: Post[];
+	empty?: string;
+	showSection?: boolean;
+}
+
+const { posts, empty = 'Nothing here yet.', showSection = false } = Astro.props;
+---
+
+{
+	posts.length === 0 ? (
+		<p class="empty">{empty}</p>
+	) : (
+		<ul class="posts">
+			{posts.map((post) => (
+				<li>
+					<div class="meta">
+						<FormattedDate date={post.data.pubDate} />
+						{post.data.kind === 'video' && <span class="kind">▶ video</span>}
+						{showSection && post.data.section && (
+							<a href={`/${post.data.section}`}>{lookupSection(post.data.section)?.title}</a>
+						)}
+						{post.data.draft && <span class="draft">draft</span>}
+					</div>
+					<h3>
+						<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+					</h3>
+					<p class="desc">{post.data.description}</p>
+				</li>
+			))}
+		</ul>
+	)
+}
+
+<style>
+	.posts {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	.posts li {
+		padding: 1.1em 0;
+		border-bottom: 1px solid rgb(var(--gray-light));
+	}
+	.meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.75em;
+		font-size: 0.85em;
+		color: rgb(var(--gray));
+	}
+	.meta a {
+		color: rgb(var(--gray));
+	}
+	.kind {
+		color: rgb(var(--accent));
+	}
+	.draft {
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 999px;
+		padding: 0 0.5em;
+	}
+	h3 {
+		margin: 0.15em 0;
+		font-size: 1.25em;
+	}
+	h3 a {
+		text-decoration: none;
+	}
+	.desc {
+		margin: 0;
+		color: rgb(var(--gray-dark));
+	}
+	.empty {
+		color: rgb(var(--gray));
+	}
+</style>

@@ -1,20 +1,19 @@
 ---
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
+import PostList from '../../components/PostList.astro';
 import { SITE_TITLE } from '../../consts';
-import { topicTitle } from '../../data/learning-map';
 import { publishedPosts } from '../../lib/posts';
 
 const posts = await publishedPosts();
-const description = 'Everything I have written: video companions and essays.';
+const description = 'Everything I have written, newest first.';
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={`Blog · ${SITE_TITLE}`} description={description} />
+		<BaseHead title={`Writing · ${SITE_TITLE}`} description={description} />
 		<style>
 			main {
 				width: 820px;
@@ -22,64 +21,13 @@ const description = 'Everything I have written: video companions and essays.';
 				margin: auto;
 				padding: 3em 1em;
 			}
-			ul {
-				list-style: none;
-				margin: 0;
-				padding: 0;
-			}
-			li {
-				padding: 1em 0;
-				border-bottom: 1px solid rgb(var(--gray-light));
-			}
-			.meta {
-				display: flex;
-				align-items: baseline;
-				gap: 0.75em;
-				font-size: 0.85em;
-				color: rgb(var(--gray));
-			}
-			.kind {
-				color: rgb(var(--accent));
-			}
-			h2 {
-				margin: 0.15em 0;
-				font-size: 1.25em;
-			}
-			h2 a {
-				text-decoration: none;
-			}
-			.desc {
-				margin: 0;
-				color: rgb(var(--gray-dark));
-			}
 		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
-			<h1>Blog</h1>
-			{
-				posts.length === 0 ? (
-					<p>Nothing published yet.</p>
-				) : (
-					<ul>
-						{posts.map((post) => (
-							<li>
-								<div class="meta">
-									<FormattedDate date={post.data.pubDate} />
-									{post.data.kind === 'video' && <span class="kind">▶ video</span>}
-									{post.data.topic && <span>{topicTitle(post.data.topic)}</span>}
-									{post.data.draft && <span>draft</span>}
-								</div>
-								<h2>
-									<a href={`/blog/${post.id}/`}>{post.data.title}</a>
-								</h2>
-								<p class="desc">{post.data.description}</p>
-							</li>
-						))}
-					</ul>
-				)
-			}
+			<h1>Writing</h1>
+			<PostList posts={posts} empty="Nothing published yet." showSection />
 		</main>
 		<Footer />
 	</body>

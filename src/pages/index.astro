@@ -1,12 +1,14 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
+import PostList from '../components/PostList.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
-import { publishedPosts } from '../lib/posts';
+import { SECTIONS } from '../data/sections';
+import { postCountsBySection, publishedPosts } from '../lib/posts';
 
 const posts = (await publishedPosts()).slice(0, 5);
+const counts = await postCountsBySection();
 ---
 
 <!doctype html>
@@ -14,43 +16,56 @@ const posts = (await publishedPosts()).slice(0, 5);
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
+			main {
+				width: 820px;
+				max-width: calc(100% - 2em);
+				margin: auto;
+				padding: 3em 1em;
+			}
 			.intro h1 {
 				margin-bottom: 0.25em;
 			}
 			.tagline {
-				color: rgb(var(--gray));
+				color: rgb(var(--gray-dark));
 				font-size: 1.15em;
 			}
-			.recent {
+			h2 {
 				margin-top: 2.5em;
-			}
-			.recent h2 {
-				font-size: 1.3em;
+				font-size: 1.2em;
 				border-bottom: 1px solid rgb(var(--gray-light));
 				padding-bottom: 0.4em;
 			}
-			.recent ul {
+			.sections {
 				list-style: none;
 				margin: 0;
 				padding: 0;
+				display: grid;
+				gap: 1.2em;
 			}
-			.recent li {
-				display: flex;
-				align-items: baseline;
-				gap: 1em;
-				padding: 0.5em 0;
+			.sections li {
+				padding: 1em 1.2em;
+				border: 1px solid rgb(var(--gray-light));
+				border-radius: 10px;
 			}
-			.recent li a {
+			.sections h3 {
+				margin: 0 0 0.2em 0;
+				font-size: 1.15em;
+			}
+			.sections h3 a {
 				text-decoration: none;
 			}
-			.recent .date {
-				color: rgb(var(--gray));
-				font-size: 0.9em;
-				white-space: nowrap;
+			.sections p {
+				margin: 0;
+				color: rgb(var(--gray-dark));
 			}
-			.kind {
+			.count {
 				font-size: 0.8em;
-				color: rgb(var(--accent));
+				color: rgb(var(--gray));
+			}
+			@media (min-width: 720px) {
+				.sections {
+					grid-template-columns: 1fr 1fr;
+				}
 			}
 		</style>
 	</head>
@@ -60,40 +75,33 @@ const posts = (await publishedPosts()).slice(0, 5);
 			<section class="intro">
 				<h1>Hi, I'm Aiden.</h1>
 				<p class="tagline">
-					I'm a data science master's student who learns by building. This site is where I work
-					through the concepts on my long-term learning map — from first principles, in my own
-					words — and where I post opinions on AI and software as the field moves.
-				</p>
-				<p>
-					Every video I make gets a written companion post here, and everything else is essays and
-					notes. The <a href="/learning">learning map</a> shows what I am working through and, just
-					as usefully, what I have not got to yet. If you want the short version of who I am, see
-					the <a href="/about">about page</a>.
+					I write about where artificial intelligence is actually going — the compute and capital
+					behind it, what the machines can genuinely do, and who ends up deciding. I build the
+					systems I write about, which is the only reason my opinions are worth more than anyone
+					else's.
 				</p>
 			</section>
-			<section class="recent">
-				<h2>Recent posts</h2>
+
+			<h2>What I write about</h2>
+			<ul class="sections">
 				{
-					posts.length === 0 ? (
-						<p>Nothing here yet — first post coming soon.</p>
-					) : (
-						<ul>
-							{posts.map((post) => (
-								<li>
-									<span class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</span>
-									<a href={`/blog/${post.id}/`}>{post.data.title}</a>
-									{post.data.kind === 'video' && <span class="kind">▶ video</span>}
-								</li>
-							))}
-						</ul>
-					)
+					SECTIONS.map((s) => (
+						<li>
+							<h3>
+								<a href={`/${s.slug}`}>{s.title}</a>
+							</h3>
+							<p>{s.tagline}</p>
+							<p class="count">
+								{counts.get(s.slug) ?? 0} {(counts.get(s.slug) ?? 0) === 1 ? 'post' : 'posts'}
+							</p>
+						</li>
+					))
 				}
-				<p>
-					<a href="/blog">All posts →</a>
-				</p>
-			</section>
+			</ul>
+
+			<h2>Recent</h2>
+			<PostList posts={posts} empty="Nothing published yet — first post coming soon." showSection />
+			<p><a href="/blog">All posts →</a></p>
 		</main>
 		<Footer />
 	</body>

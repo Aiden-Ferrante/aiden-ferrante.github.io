@@ -1,0 +1,76 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import PostList from '../components/PostList.astro';
+import { SITE_TITLE } from '../consts';
+import { SECTIONS, type Section } from '../data/sections';
+import { postsInSection, type Post } from '../lib/posts';
+
+export async function getStaticPaths() {
+	return Promise.all(
+		SECTIONS.map(async (section) => ({
+			params: { section: section.slug },
+			props: { section, posts: await postsInSection(section.slug) },
+		})),
+	);
+}
+
+interface Props {
+	section: Section;
+	posts: Post[];
+}
+
+const { section, posts } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`${section.title} · ${SITE_TITLE}`} description={section.tagline} />
+		<style>
+			main {
+				width: 820px;
+				max-width: calc(100% - 2em);
+				margin: auto;
+				padding: 3em 1em;
+			}
+			h1 {
+				margin-bottom: 0.2em;
+			}
+			.tagline {
+				margin-top: 0;
+				color: rgb(var(--gray));
+				font-size: 1.1em;
+			}
+			.thesis {
+				margin: 2em 0;
+				padding-left: 1.2em;
+				border-left: 3px solid rgb(var(--accent));
+				color: rgb(var(--gray-dark));
+			}
+			.thesis p:last-child {
+				margin-bottom: 0;
+			}
+			h2 {
+				margin-top: 2.5em;
+				font-size: 1.2em;
+				border-bottom: 1px solid rgb(var(--gray-light));
+				padding-bottom: 0.4em;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>{section.title}</h1>
+			<p class="tagline">{section.tagline}</p>
+			<div class="thesis">
+				{section.thesis.map((para) => <p>{para}</p>)}
+			</div>
+			<h2>Posts</h2>
+			<PostList posts={posts} empty="No posts in this section yet." />
+		</main>
+		<Footer />
+	</body>
+</html>

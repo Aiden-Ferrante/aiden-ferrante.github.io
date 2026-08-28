@@ -1,39 +1,45 @@
 # Architecture
 
-Static personal site (blog + YouTube companion posts) for aiden-ferrante.github.io.
+Static personal site for aiden-ferrante.github.io: opinion commentary on four standing beats,
+plus a map of the work behind it.
 
 ## Boundaries
 
 - **Content is data, code is presentation.** All posts are markdown in `src/content/blog/`;
   nothing else in the repo knows about individual posts. The frontmatter schema in
   `src/content.config.ts` is the one contract between them.
+- **Four sections, in `src/data/sections.ts`.** These are standing editorial beats, not tags —
+  each carries a thesis naming the instrument or first-hand position behind it. Adding a fifth
+  means adding to that file and nothing else; the nav, homepage, section pages and post metadata
+  all derive from it.
+- **`section:` is a mechanical contract.** The post schema validates it against the section
+  slugs, so a typo or a renamed beat fails the build instead of quietly orphaning a post.
+  Duplicate slugs fail the build too.
+- **Projects are data, in `src/data/projects.ts`,** with honest `status` and a `repo` link only
+  where something is actually public. This is the page a reader can most easily fact-check, so
+  it must never overstate.
 - **Two post kinds, one collection.** `kind: essay | video`. A `video` post carries a `video:`
   YouTube URL; the layout embeds it. No separate collection — a video companion IS a post.
 - **Site-wide identity lives in `src/consts.ts`** (title, description, GitHub/YouTube URLs).
   Components import from there, never hardcode.
-- **The learning map is data, in `src/data/learning-map.ts`.** It mirrors the node *names* of the
-  shipyard chart's "AI Technical Skills" branch and nothing else — no waypoints, no falsifiers, no
-  soundings, and none of the personal branches. The chart stays the private planning artifact; this
-  is the public index of topics.
-- **`topic:` is a mechanical contract, not a convention.** The post schema validates `topic`
-  against the map's slugs, so a typo or a renamed node fails the build instead of silently
-  dropping a post off the map. Duplicate slugs in the map fail the build too.
-- **Coverage is computed, never hand-maintained.** `/learning` derives "N of M written" from the
-  posts that exist. A node with no post renders as plain text — writing the post is the only way to
-  mark it off.
 - **`draft: true` hides a post from the build** but shows it on the dev server.
-- **No server, no keys.** Pure static build (`astro build`), deployed by GitHub Actions
-  (`.github/workflows/deploy.yml`) to GitHub Pages on push to main. Nothing depends on the Spark
-  being up.
+- **No server, no keys.** Pure static build, deployed by GitHub Actions to GitHub Pages on push
+  to main. Nothing depends on the workstation being up.
+
+## Routing
+
+`src/pages/[section].astro` generates one page per section at the root (`/the-race`). Static
+routes (`/about`, `/projects`, `/blog`) take precedence over it, which is why the section slugs
+must never collide with a page name.
 
 ## Checks
 
 `npm run check` (astro check) runs in CI before the build, so a type error blocks the deploy
-rather than shipping. The topic-slug and duplicate-slug guards fail the build itself.
+rather than shipping. The section-slug and duplicate-slug guards fail the build itself.
 
 ## Publishing flow
 
-1. Write `src/content/blog/<slug>.md` with frontmatter.
+1. Copy `templates/post.md` to `src/content/blog/<slug>.md`, set `section:`, write.
 2. Commit, push to main → Actions builds and deploys.
 
 ## Later

@@ -1,0 +1,94 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+import { PROJECTS, STATUS_LABEL } from '../data/projects';
+
+const title = 'Projects';
+const description = 'A map of what I am building.';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`${title} · ${SITE_TITLE}`} description={description} />
+		<style>
+			main {
+				width: 820px;
+				max-width: calc(100% - 2em);
+				margin: auto;
+				padding: 3em 1em;
+			}
+			.lede {
+				color: rgb(var(--gray-dark));
+			}
+			ul {
+				list-style: none;
+				margin: 2em 0 0 0;
+				padding: 0;
+			}
+			li {
+				padding: 1.2em 0;
+				border-bottom: 1px solid rgb(var(--gray-light));
+			}
+			.head {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: baseline;
+				gap: 0.75em;
+			}
+			.name {
+				margin: 0;
+				font-size: 1.2em;
+			}
+			.status {
+				font-size: 0.75em;
+				color: rgb(var(--gray));
+				border: 1px solid rgb(var(--gray-light));
+				border-radius: 999px;
+				padding: 0 0.6em;
+			}
+			.note {
+				font-size: 0.8em;
+				color: rgb(var(--gray));
+			}
+			.blurb {
+				margin: 0.4em 0 0.5em 0;
+				color: rgb(var(--gray-dark));
+			}
+			.tags {
+				font-size: 0.8em;
+				color: rgb(var(--gray));
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>{title}</h1>
+			<p class="lede">
+				What I am building, and what state each thing is honestly in. Some of it is public;
+				where it is not, I have said so rather than link you somewhere you cannot go.
+			</p>
+			<ul>
+				{
+					PROJECTS.map((project) => (
+						<li>
+							<div class="head">
+								<h2 class="name">
+									{project.repo ? <a href={project.repo}>{project.name}</a> : project.name}
+								</h2>
+								<span class="status">{STATUS_LABEL[project.status]}</span>
+								{project.note && <span class="note">{project.note}</span>}
+							</div>
+							<p class="blurb">{project.blurb}</p>
+							<p class="tags">{project.tags.join(' · ')}</p>
+						</li>
+					))
+				}
+			</ul>
+		</main>
+		<Footer />
+	</body>
+</html>

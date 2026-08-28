@@ -11,10 +11,10 @@ import Header from '../components/Header.astro';
 type Props = Partial<CollectionEntry<'blog'>['data']> &
 	Pick<CollectionEntry<'blog'>['data'], 'title' | 'description' | 'pubDate'>;
 
-import { topicTitle } from '../data/learning-map';
+import { section as lookupSection } from '../data/sections';
 
-const { title, description, pubDate, updatedDate, heroImage, video, topic } = Astro.props;
-const topicName = topic ? topicTitle(topic) : undefined;
+const { title, description, pubDate, updatedDate, heroImage, video, section } = Astro.props;
+const sectionInfo = section ? lookupSection(section) : undefined;
 
 // Accept youtube.com/watch?v=, youtu.be/, and shorts/ URLs
 function youtubeEmbedUrl(url: string): string | undefined {
@@ -107,9 +107,9 @@ const embedUrl = video ? youtubeEmbedUrl(video) : undefined;
 						</div>
 						<h1>{title}</h1>
 						{
-							topicName && (
+							sectionInfo && (
 								<p class="topic">
-									Part of <a href="/learning">{topicName}</a>
+									<a href={`/${sectionInfo.slug}`}>{sectionInfo.title}</a>
 								</p>
 							)
 						}

@@ -8,12 +8,16 @@ export async function publishedPosts(): Promise<Post[]> {
 	return posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 }
 
-export async function postsByTopic(): Promise<Map<string, Post[]>> {
-	const byTopic = new Map<string, Post[]>();
+export async function postsInSection(slug: string): Promise<Post[]> {
+	return (await publishedPosts()).filter((post) => post.data.section === slug);
+}
+
+export async function postCountsBySection(): Promise<Map<string, number>> {
+	const counts = new Map<string, number>();
 	for (const post of await publishedPosts()) {
-		const topic = post.data.topic;
-		if (!topic) continue;
-		byTopic.set(topic, [...(byTopic.get(topic) ?? []), post]);
+		const slug = post.data.section;
+		if (!slug) continue;
+		counts.set(slug, (counts.get(slug) ?? 0) + 1);
 	}
-	return byTopic;
+	return counts;
 }
