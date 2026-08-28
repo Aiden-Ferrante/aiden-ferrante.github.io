@@ -1,8 +1,16 @@
 // The public learning map.
 //
-// Titles mirror node names in the shipyard chart's "AI Technical Skills" branch so
-// the two stay legible against each other. Only that branch is published, and only
-// the node NAMES — waypoints, falsifiers and soundings stay in the chart.
+// Derived from the shipyard chart's "AI Technical Skills" branch. Only that branch is
+// published, and only the node NAMES — waypoints, falsifiers and soundings stay in the
+// chart, as do the personal branches.
+//
+// Titles track the chart closely but are not identical; these read better in public:
+//   "Introduction to AI"            -> "Foundations"
+//   "Deep Learning ML"              -> "Deep Learning"
+//   "Neural Networks Zero to Hero"  -> "Neural Networks: Zero to Hero"
+//   "Set of Architectures"          -> "A Set of Architectures"
+//   "Supervised Learning - X"       -> "Supervised Learning — X"
+// If a chart node is renamed, reconcile by hand — nothing checks this automatically.
 //
 // A node with no post yet renders as plain text. Writing a post with a matching
 // `topic:` slug is what lights it up.
