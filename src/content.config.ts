@@ -18,7 +18,7 @@ const blog = defineCollection({
 			// 'essay' = standalone opinion/notes; 'video' = companion post to a YouTube video
 			kind: z.enum(['essay', 'video']).default('essay'),
 			// YouTube URL, required in practice when kind is 'video'
-			video: z.string().url().optional(),
+			video: z.url().optional(),
 			// Node in the learning map (src/data/learning-map.ts). Must be a known slug —
 			// a typo fails the build rather than quietly dropping the post off the map.
 			topic: z
