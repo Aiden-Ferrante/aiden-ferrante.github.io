@@ -1,14 +1,12 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { publishedPosts } from '../lib/posts';
 
-const posts = (await getCollection('blog'))
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.slice(0, 5);
+const posts = (await publishedPosts()).slice(0, 5);
 ---
 
 <!doctype html>
@@ -68,7 +66,9 @@ const posts = (await getCollection('blog'))
 				</p>
 				<p>
 					Every video I make gets a written companion post here, and everything else is essays and
-					notes. If you want the short version of who I am, see the <a href="/about">about page</a>.
+					notes. The <a href="/learning">learning map</a> shows what I am working through and, just
+					as usefully, what I have not got to yet. If you want the short version of who I am, see
+					the <a href="/about">about page</a>.
 				</p>
 			</section>
 			<section class="recent">

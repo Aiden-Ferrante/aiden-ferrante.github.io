@@ -11,6 +11,17 @@ Static personal site (blog + YouTube companion posts) for aiden-ferrante.github.
   YouTube URL; the layout embeds it. No separate collection — a video companion IS a post.
 - **Site-wide identity lives in `src/consts.ts`** (title, description, GitHub/YouTube URLs).
   Components import from there, never hardcode.
+- **The learning map is data, in `src/data/learning-map.ts`.** It mirrors the node *names* of the
+  shipyard chart's "AI Technical Skills" branch and nothing else — no waypoints, no falsifiers, no
+  soundings, and none of the personal branches. The chart stays the private planning artifact; this
+  is the public index of topics.
+- **`topic:` is a mechanical contract, not a convention.** The post schema validates `topic`
+  against the map's slugs, so a typo or a renamed node fails the build instead of silently
+  dropping a post off the map. Duplicate slugs in the map fail the build too.
+- **Coverage is computed, never hand-maintained.** `/learning` derives "N of M written" from the
+  posts that exist. A node with no post renders as plain text — writing the post is the only way to
+  mark it off.
+- **`draft: true` hides a post from the build** but shows it on the dev server.
 - **No server, no keys.** Pure static build (`astro build`), deployed by GitHub Actions
   (`.github/workflows/deploy.yml`) to GitHub Pages on push to main. Nothing depends on the Spark
   being up.

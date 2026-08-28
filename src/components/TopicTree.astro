@@ -1,0 +1,105 @@
+---
+import type { TopicNode } from '../data/learning-map';
+import type { Post } from '../lib/posts';
+
+interface Props {
+	nodes: TopicNode[];
+	posts: Map<string, Post[]>;
+	depth?: number;
+}
+
+const { nodes, posts, depth = 0 } = Astro.props;
+---
+
+<ul class:list={['topics', { root: depth === 0 }]}>
+	{
+		nodes.map((node) => {
+			const written = posts.get(node.slug) ?? [];
+			return (
+				<li>
+					<div class="node">
+						<span class:list={['title', { done: written.length > 0 }]}>{node.title}</span>
+						{written.length === 0 && <span class="pending">planned</span>}
+					</div>
+					{node.blurb && <p class="blurb">{node.blurb}</p>}
+					{written.length > 0 && (
+						<ul class="posts">
+							{written.map((post) => (
+								<li>
+									<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+									{post.data.kind === 'video' && <span class="kind">▶</span>}
+								</li>
+							))}
+						</ul>
+					)}
+					{node.children && node.children.length > 0 && (
+						<Astro.self nodes={node.children} posts={posts} depth={depth + 1} />
+					)}
+				</li>
+			);
+		})
+	}
+</ul>
+
+<style>
+	.topics {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	.topics:not(.root) {
+		margin-left: 1em;
+		padding-left: 1em;
+		border-left: 1px solid rgb(var(--gray-light));
+	}
+	.topics > li {
+		margin: 0.35em 0;
+	}
+	.root > li {
+		margin-bottom: 2em;
+	}
+	.node {
+		display: flex;
+		align-items: baseline;
+		gap: 0.6em;
+	}
+	.title {
+		color: rgb(var(--gray));
+	}
+	.title.done {
+		color: rgb(var(--black));
+		font-weight: 600;
+	}
+	.root > li > .node > .title {
+		font-size: 1.35em;
+		font-weight: 700;
+		color: rgb(var(--black));
+	}
+	.pending {
+		font-size: 0.75em;
+		color: rgb(var(--gray));
+		border: 1px solid rgb(var(--gray-light));
+		border-radius: 999px;
+		padding: 0 0.5em;
+	}
+	.root > li > .node > .pending {
+		display: none;
+	}
+	.blurb {
+		margin: 0.25em 0 0.5em 0;
+		color: rgb(var(--gray));
+		font-size: 0.95em;
+	}
+	.posts {
+		list-style: none;
+		margin: 0.2em 0 0.4em 0;
+		padding: 0;
+	}
+	.posts li {
+		font-size: 0.95em;
+	}
+	.kind {
+		color: rgb(var(--accent));
+		font-size: 0.85em;
+	}
+</style>

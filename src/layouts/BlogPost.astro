@@ -8,7 +8,10 @@ import Header from '../components/Header.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage, video } = Astro.props;
+import { topicTitle } from '../data/learning-map';
+
+const { title, description, pubDate, updatedDate, heroImage, video, topic } = Astro.props;
+const topicName = topic ? topicTitle(topic) : undefined;
 
 // Accept youtube.com/watch?v=, youtu.be/, and shorts/ URLs
 function youtubeEmbedUrl(url: string): string | undefined {
@@ -59,6 +62,11 @@ const embedUrl = video ? youtubeEmbedUrl(video) : undefined;
 			.last-updated-on {
 				font-style: italic;
 			}
+			.topic {
+				margin: 0 0 0.5em 0;
+				color: rgb(var(--gray));
+				font-size: 0.9em;
+			}
 			.video-embed {
 				width: 720px;
 				max-width: calc(100% - 2em);
@@ -95,6 +103,13 @@ const embedUrl = video ? youtubeEmbedUrl(video) : undefined;
 							}
 						</div>
 						<h1>{title}</h1>
+						{
+							topicName && (
+								<p class="topic">
+									Part of <a href="/learning">{topicName}</a>
+								</p>
+							)
+						}
 						<hr />
 					</div>
 					{
